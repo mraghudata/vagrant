@@ -1,2 +1,15 @@
 id_rsa*
 .vagrant
+vagrant-mysql
+vagrant
+vagrant-demo/Vagrantfile.mysql
+vagrant-demo/Vagrantfile.ok.1
+vagrant-demo/Vagrantfile.org
+vagrant-demo/.vagrant
+vagrant-demo/.vagrant/machines/default/virtualbox/action_provision
+vagrant-demo/.vagrant/machines/default/virtualbox/action_set_name
+vagrant-demo/.vagrant/machines/default/virtualbox/id
+vagrant-demo/.vagrant/machines/default/virtualbox/index_uuid
+vagrant-demo/.vagrant/machines/default/virtualbox/private_key
+vagrant-demo/.vagrant/machines/default/virtualbox/synced_folders
+vagrant-demo/.vagrant/machines/default/virtualbox/vagrant_cwd

@@ -24,6 +24,7 @@ Vagrant.configure("2") do |config|
   # accessing "localhost:8080" will access port 80 on the guest machine.
   # NOTE: This will enable public access to the opened port
   # config.vm.network "forwarded_port", guest: 80, host: 8080
+  config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine and only allow access
@@ -67,7 +68,33 @@ Vagrant.configure("2") do |config|
   #   apt-get update
   #   apt-get install -y apache2
   # SHELL
+  #if [ $(grep -Fc -f /vagrant/id_rsa.pub $HOME/.ssh/$1) -eq 0 ]
+  #grep -Fc -f /vagrant/id_rsa.pub /home/vagrant/.ssh/authorized_keys
   config.vm.provision "shell", inline: <<-SHELL
-    cat /vagrant/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
+  if [ `grep -Fc -f /vagrant/id_rsa.pub /home/vagrant/.ssh/authorized_keys` -eq 0 ]
+  then
+  cp /home/vagrant/.ssh/authorized_keys /home/vagrant/.ssh/authorized_keys.org
+  cat /vagrant/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
+  fi
+  echo "Installng httpd ............................................"
+  sudo yum install httpd -y
+  echo "Installing net tools ......................................."
+  sudo yum install net-tools.x86_64 -y
+  echo "Starting httpd service ....................................."
+  sudo systemctl start httpd.service
+  echo "Installing mysql client ...................................."
+  sudo yum install mariadb -y
+  echo "Installing mysql server ...................................."
+  sudo yum install mariadb-server -y
+  echo "Starting mysql server ......................................"
+  sudo systemctl start mariadb
+  echo "Copying setup files to virtualbox .........................."
+  cp -rf /vagrant/scripts /home/vagrant
+  cp -rf /vagrant/sql /home/vagrant
+  cp /vagrant/html/demo.html /var/www/html/demo.html
+  ls -ltr /home/vagrant/sql/* /home/vagrant/scripts/* /var/www/html/*
+  mysql -u root < /home/vagrant/sql/db1_setup.sql
+  chmod +x /home/vagrant/scripts/checkdb.sh
+  /home/vagrant/scripts/checkdb.sh
 SHELL
 end
